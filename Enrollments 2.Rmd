@@ -1,0 +1,38 @@
+---
+title: "Enrollments 2"
+author: "Maddie Chai"
+date: "10/17/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(tidyverse)
+library(janitor)
+library(dplyr)
+```
+
+
+```{r}
+e_2018 <- read_xlsx("class_enrollment_summary_by_term_10_12.xlsx", skip = 2) %>%
+  clean_names() %>%
+  filter(! is.na(course_name))
+
+e_2017 <- read_xlsx("class_enrollment_summary_by_term_10.20.17.xlsx", skip = 2) %>%
+  clean_names() %>%
+  filter(! is.na(course_name))
+
+e_2016 <- read_xlsx("copy_of_class_enrollment_summary_by_term_10.06.2016.xlsx", skip = 2) %>%
+  clean_names() %>%
+  filter(! is.na(course_name))
+
+e_2015 <- read_xlsx("CourseEnrollmentStatistics.xlsx") %>%
+  clean_names() %>%
+  filter(! is.na(course_id))
+```
+
+
+
+
+
