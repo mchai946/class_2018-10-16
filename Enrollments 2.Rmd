@@ -15,13 +15,18 @@ library(dplyr)
 
 
 ```{r}
+
+#Importing all datasets
+
 e_2018 <- read_xlsx("class_enrollment_summary_by_term_10_12.xlsx", skip = 2) %>%
   clean_names() %>%
-  filter(! is.na(course_name))
+  filter(! is.na(course_name)) %>%
+  distinct(course_id, .keep_all = TRUE)
 
 e_2017 <- read_xlsx("class_enrollment_summary_by_term_10.20.17.xlsx", skip = 2) %>%
   clean_names() %>%
-  filter(! is.na(course_name))
+  filter(! is.na(course_name)) %>%
+  distinct(course_id, .keep_all = TRUE)
 
 e_2016 <- read_xlsx("copy_of_class_enrollment_summary_by_term_10.06.2016.xlsx", skip = 2) %>%
   clean_names() %>%
@@ -30,6 +35,29 @@ e_2016 <- read_xlsx("copy_of_class_enrollment_summary_by_term_10.06.2016.xlsx", 
 e_2015 <- read_xlsx("CourseEnrollmentStatistics.xlsx") %>%
   clean_names() %>%
   filter(! is.na(course_id))
+```
+
+```{r}
+#Command-shift-/ makes the commented code better formatted. Left_join brings
+#together the datasets, combining them using course_id (after confirming that
+#course id's do not change per year)
+
+x <- left_join(e_2018, e_2017, by = "course_id", suffix = c(".18", ".17")) %>%
+  filter(!is.na(total.18), !is.na(total.17)) %>%
+  select(course_id, course_name.18, total.18, total.17) %>%
+  mutate(enrol_change = total.18 - total.17) %>%
+  arrange(desc(enrol_change)) %>%
+  slice(1:10)
+
+#Finding the classes with the biggest increase in enrollment from 2017 to 2018
+
+y <- left_join(e_2018, e_2015, by = "course_id", suffix = c(".18", ".15")) %>%
+  select(course_id, course_name, u_grad, hcol) %>%
+  mutate(enrol_change = u_grad - hcol) %>%
+  arrange(desc(enrol_change))%>%
+  slice(1:10)
+
+#Finding the classes with the biggest increase in enrollment from 2015 to 2018
 ```
 
 
